@@ -2,6 +2,7 @@
 
 import asyncio
 
+from agent_framework import add_usage_details
 from agent_framework.orchestrations import SequentialBuilder
 
 from shared.config import BenchmarkSettings
@@ -44,8 +45,22 @@ async def run_async(company: str, settings: BenchmarkSettings) -> tuple[str, dic
             if msg.role == "assistant" and msg.text and len(msg.text) > len(report_text):
                 report_text = msg.text
 
-    # Token tracking is limited in the beta Ollama backend
-    token_usage = {"prompt": 0, "completion": 0}
+    # Extract token usage from workflow events.
+    # AgentExecutor emits executor_invoked events carrying AgentExecutorResponse
+    # whose agent_response.usage_details holds the Ollama token counts
+    # (prompt_eval_count → input_token_count, eval_count → output_token_count).
+    combined_usage = None
+    for event in result:
+        data = event.data
+        if data is not None and hasattr(data, "agent_response"):
+            usage = getattr(data.agent_response, "usage_details", None)
+            if usage:
+                combined_usage = add_usage_details(combined_usage, usage)
+
+    token_usage = {
+        "prompt": (combined_usage or {}).get("input_token_count", 0) or 0,
+        "completion": (combined_usage or {}).get("output_token_count", 0) or 0,
+    }
 
     return report_text, token_usage
 
