@@ -269,7 +269,7 @@ No benchmark is perfect, and this one has gaps I'd address in a v2:
 | Analysis | pandas + Plotly |
 | Notebooks | Jupyter |
 
-All code, data, and analysis notebooks are open source: [agent-framework-benchmark](https://github.com/yourusername/agent-framework-benchmark)
+All code, data, and analysis notebooks are open source: [agent-framework-benchmark](https://github.com/LukaszGrochal/agent-framework-benchmark)
 
 ## Series Navigation
 

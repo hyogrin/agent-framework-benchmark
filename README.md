@@ -14,6 +14,24 @@ An objective, data-driven comparison of **5 multi-agent frameworks** using the s
 | 4 | **MS Agent Framework** | 1.0.0b | Sequential orchestration | Beta (GA ~March 2026) |
 | 5 | **OpenAI Agents SDK** | latest | Runner-based pipeline | Active |
 
+## Key Results
+
+> **Full analysis:** [Article Series](#) | [Interactive Notebook](notebooks/analysis.ipynb)
+
+| Framework | Quality (1-10) | Latency | Tokens | Consistency (Std) |
+|-----------|---------------|---------|--------|-------------------|
+| **MS Agent Framework** | **9.87** | **93s** | N/A* | **0.10** |
+| CrewAI | 9.66 | 246s | 27,684 | 0.30 |
+| AutoGen | 9.63 | 572s | 10,793 | 0.45 |
+| LangGraph | 9.42 | 506s | 8,823 | 0.32 |
+| OpenAI Agents SDK | 9.31 | 448s | 8,676 | 0.36 |
+
+*\*MS Agent Framework beta didn't expose token tracking at time of benchmark.*
+
+**Key finding:** All frameworks produce excellent output (9.0+). The real differentiators are **speed** (6x gap), **token efficiency** (3x gap), and **consistency**.
+
+![Quality vs Latency](results/figures/07_quality_vs_latency.png)
+
 ## Architecture
 
 ```

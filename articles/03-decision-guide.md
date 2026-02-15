@@ -120,7 +120,7 @@ Don't fight your stack. If you're using OpenAI models, OpenAI's function calling
 
 Everything behind this analysis is open source. Run the benchmarks yourself, challenge my numbers, extend the comparison to new frameworks or tasks.
 
-- **GitHub**: [agent-framework-benchmark](https://github.com/yourusername/agent-framework-benchmark)
+- **GitHub**: [agent-framework-benchmark](https://github.com/LukaszGrochal/agent-framework-benchmark)
 - **Analysis notebook**: `notebooks/analysis.ipynb` -- all charts, tables, and statistical tests
 - **Raw data**: `results/benchmark_results.csv` -- 45 runs, every metric
 

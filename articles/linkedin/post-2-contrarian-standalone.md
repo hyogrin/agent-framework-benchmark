@@ -16,6 +16,6 @@ The task: a 3-agent company research pipeline â€” Researcher, Analyst, Writer â€
 
 In 2026, picking an agent framework is less about "which one is smartest" and more about "which one fits your constraints." They're all smart enough. The question is speed, cost, consistency, and ecosystem maturity.
 
-The data is open source if you want to check my work: [repo link]
+The data is open source if you want to check my work: https://github.com/LukaszGrochal/agent-framework-benchmark
 
 #AI #AgentFrameworks #DataDriven #Python #MachineLearning

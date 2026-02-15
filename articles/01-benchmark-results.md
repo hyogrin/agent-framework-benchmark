@@ -166,4 +166,4 @@ This article covered the *what*. The next two in this series cover the *how* and
 
 *Built with Python 3.12, uv, Ollama (Qwen 3 14B), and too many hours debugging dependency conflicts between frameworks that each want their own version of the OpenAI SDK.*
 
-*All code, data, and analysis notebooks are open source: [agent-framework-benchmark](https://github.com/yourusername/agent-framework-benchmark)*
+*All code, data, and analysis notebooks are open source: [agent-framework-benchmark](https://github.com/LukaszGrochal/agent-framework-benchmark)*
