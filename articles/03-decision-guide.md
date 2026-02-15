@@ -19,7 +19,7 @@ Here's the decision matrix:
 | Raw speed | MS Agent Framework | 93s latency (6x faster), 9.87 quality |
 | Microsoft/Azure ecosystem | MS Agent Framework | Ecosystem integration, successor to AutoGen + Semantic Kernel |
 | OpenAI-native apps | Agents SDK | Tightest OpenAI integration, built-in tracing |
-| Lowest token cost | Agents SDK | 8,676 tokens/run (vs CrewAI's 27,684) |
+| Lowest token cost | MS Agent Framework | 7,006 tokens/run (vs CrewAI's 27,684) |
 | Most consistent output | MS Agent Framework | Std=0.10, range=0.2 (narrowest) |
 
 If you already know your top constraint, that table might be all you need. If you want to understand the tradeoffs in depth, keep reading.
@@ -54,18 +54,17 @@ Here's what each framework costs at GPT-4o rates ($2.50/1M input, $10/1M output,
 
 | Framework | Tokens/Run | Approx Cost/Run | 1,000 runs/month |
 |-----------|-----------|-----------------|-------------------|
+| MS Agent | 7,006 | ~$0.06 | ~$60 |
 | Agents SDK | 8,676 | ~$0.07 | ~$70 |
 | LangGraph | 8,823 | ~$0.07 | ~$70 |
 | AutoGen | 10,793 | ~$0.09 | ~$90 |
 | CrewAI | 27,684 | ~$0.22 | ~$220 |
 
-*(MS Agent Framework's beta didn't expose token tracking, so it's excluded.)*
-
 ![Token efficiency comparison](../results/figures/11_token_efficiency.png)
 
-CrewAI uses 3.2x more tokens than the leanest frameworks. That's the cost of its role-playing architecture -- verbose system prompts and inter-agent communication inflate every run. At $220/month for 1,000 runs, it's still reasonable. But scale to 10,000 runs and you're looking at $2,200 vs $700. That delta funds an engineer for a week.
+CrewAI uses nearly 4x more tokens than MS Agent Framework. That's the cost of its role-playing architecture -- verbose system prompts and inter-agent communication inflate every run. At $220/month for 1,000 runs, it's still reasonable. But scale to 10,000 runs and you're looking at $2,200 vs $600. That delta funds an engineer for a week.
 
-Agents SDK and LangGraph are essentially tied at ~8,700 tokens per run. If token cost is your binding constraint and you have no other strong preferences, either of these is a safe bet.
+MS Agent Framework is the most token-efficient at ~7,000 tokens per run, with Agents SDK and LangGraph close behind at ~8,700. If token cost is your binding constraint, any of the three lean frameworks is a safe bet.
 
 ## Factor 3: Production Readiness
 

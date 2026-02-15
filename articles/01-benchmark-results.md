@@ -80,16 +80,15 @@ AutoGen's async group chat pattern, while flexible, introduces significant coord
 
 Not all frameworks are equally efficient with their LLM calls. Average total tokens per run:
 
+- **MS Agent Framework**: 7,006 tokens
 - **Agents SDK**: 8,676 tokens
 - **LangGraph**: 8,823 tokens
 - **AutoGen**: 10,793 tokens
 - **CrewAI**: 27,684 tokens
 
-CrewAI uses **3.2x more tokens** than Agents SDK to produce comparable quality output. At local Ollama pricing, this is free. At GPT-4o pricing ($2.50/1M input, $10/1M output), that's the difference between ~$0.07 and ~$0.22 per run. Scale to thousands of runs per day and the gap matters.
+CrewAI uses **nearly 4x more tokens** than MS Agent Framework to produce comparable quality output. At local Ollama pricing, this is free. At GPT-4o pricing ($2.50/1M input, $10/1M output), that's the difference between ~$0.06 and ~$0.22 per run. Scale to thousands of runs per day and the gap matters.
 
-Why such a spread? CrewAI's role-playing approach includes verbose system prompts and inter-agent communication that inflates token counts. Agents SDK and LangGraph take a leaner approach with minimal framing overhead.
-
-*(Note: MS Agent Framework's beta release didn't expose token tracking, so it's excluded from this comparison.)*
+Why such a spread? CrewAI's role-playing approach includes verbose system prompts and inter-agent communication that inflates token counts. MS Agent Framework, Agents SDK, and LangGraph take a leaner approach with minimal framing overhead.
 
 ### Consistency: The Hidden Variable
 
@@ -137,15 +136,13 @@ Putting it all together:
 
 | Framework | Quality | Latency (s) | Tokens | Consistency (std) |
 |-----------|---------|-------------|--------|-------------------|
-| MS Agent | 9.87 | 93 | N/A* | 0.10 |
+| MS Agent | 9.87 | 93 | 7,006 | 0.10 |
 | CrewAI | 9.66 | 246 | 27,684 | 0.30 |
 | AutoGen | 9.63 | 572 | 10,793 | 0.45 |
 | LangGraph | 9.42 | 506 | 8,823 | 0.32 |
 | Agents SDK | 9.31 | 448 | 8,676 | 0.36 |
 
-*\*MS Agent Framework beta didn't expose token tracking.*
-
-MS Agent dominates on quality, speed, and consistency — but it's a 1.0.0 beta release with limited token observability and a smaller ecosystem. If you're comfortable betting on a newer framework, it's compelling. If you need production maturity and community support today, that's a different calculation.
+MS Agent dominates on every metric — quality, speed, token efficiency, and consistency — but it's a 1.0.0 beta release with a smaller ecosystem. If you're comfortable betting on a newer framework, it's compelling. If you need production maturity and community support today, that's a different calculation.
 
 CrewAI is the pragmatic middle ground: fast enough, high quality, reasonable consistency, and the most intuitive API of the bunch. The token cost is the tax you pay for its role-playing architecture. For most teams, that tradeoff is worth it.
 

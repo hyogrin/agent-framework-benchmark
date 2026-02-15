@@ -253,7 +253,7 @@ No benchmark is perfect, and this one has gaps I'd address in a v2:
 
 **Test with cloud models.** Running the same benchmark with GPT-4o and Claude Sonnet would answer an important question: do framework rankings change with model capability? It's possible that a framework that adds overhead with a strong model actually helps compensate for a weaker model's limitations, or vice versa.
 
-**Better token tracking.** MS Agent Framework's beta release didn't expose token usage metrics, so it's missing from the token efficiency comparison. A complete benchmark needs instrumentation hooks that work regardless of framework.
+**Standardized token tracking.** Token tracking varies across frameworks — some report tokens natively, others require instrumentation hooks. A complete benchmark needs a framework-agnostic way to capture token usage at the provider level, rather than relying on each framework's own reporting.
 
 ## Tech Stack
 
