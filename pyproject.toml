@@ -1,0 +1,112 @@
+[project]
+name = "agent-framework-benchmark"
+version = "0.1.0"
+description = "Objective benchmark comparing 5 multi-agent frameworks with local-first LLM support"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "Lukasz Grochal" }]
+dependencies = [
+    # Shared
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "pandas>=2.0.0",
+    "plotly>=5.0.0",
+    "tenacity>=8.0.0",
+
+    # LLM Providers (for llm_core + judge)
+    "anthropic>=0.18.0",
+    "openai>=1.0.0",
+    "ollama>=0.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "jupyter>=1.0.0",
+    "nbformat>=5.0.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+]
+
+# Framework dependencies use dependency-groups (PEP 735) instead of
+# optional-dependencies because they have mutually incompatible version
+# constraints (e.g., crewai pins openai<1.84 while agent-framework needs >=1.99).
+# Dependency groups are resolved independently by uv.
+#
+# Install frameworks with: uv sync --group <name>
+# Install compatible sets: uv sync --group langgraph --group autogen
+[dependency-groups]
+crewai = [
+    "crewai>=1.9.0",
+]
+langgraph = [
+    "langgraph>=1.0.0",
+    "langchain-ollama>=0.3.0",
+    "langchain-openai>=0.3.0",
+    "langchain-anthropic>=0.3.0",
+]
+autogen = [
+    "autogen-agentchat>=0.7.0",
+    "autogen-ext>=0.7.0",
+]
+msagent = [
+    "agent-framework>=1.0.0b260130,<2.0.0",
+]
+agents-sdk = [
+    "openai-agents>=0.1.0",
+]
+
+[tool.uv]
+prerelease = "allow"
+
+# Declare framework groups as mutually conflicting so uv resolves them
+# independently. CrewAI pins openai<1.84 while agent-framework/openai-agents
+# require openai>=1.99 — these cannot coexist in one environment.
+conflicts = [
+    [
+        { group = "crewai" },
+        { group = "msagent" },
+    ],
+    [
+        { group = "crewai" },
+        { group = "agents-sdk" },
+    ],
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/shared",
+    "src/benchmark",
+    "src/eval_core",
+    "src/llm_core",
+    "src/crewai_impl",
+    "src/langgraph_impl",
+    "src/autogen_impl",
+    "src/msagent_impl",
+    "src/agents_sdk_impl",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+mypy_path = "src"
