@@ -1,10 +1,21 @@
 """LangGraph node functions for the company research pipeline."""
 
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from shared.prompts import ANALYST_SYSTEM, RESEARCHER_SYSTEM, WRITER_SYSTEM
 from shared.tools import gather_all_search_results
 from langgraph_impl.state import PipelineState
+
+
+def _build_task(company: str) -> str:
+    """Build the shared team task message, identical to MS Agent's task."""
+    search_results = gather_all_search_results(company)
+    return (
+        f"Research and write a comprehensive report about {company}. "
+        f"Here is the available research data:\n\n{search_results}\n\n"
+        f"The researcher should organize the facts, the analyst should identify "
+        f"key insights, and the writer should produce the final 500-800 word report."
+    )
 
 
 def researcher(state: PipelineState, llm) -> dict:
@@ -15,54 +26,50 @@ def researcher(state: PipelineState, llm) -> dict:
         llm: LangChain chat model.
 
     Returns:
-        Dict with 'research' key containing gathered information.
+        Dict with 'task' and 'history' keys.
     """
     company = state["company"]
-
-    search_results = gather_all_search_results(company)
+    task = _build_task(company)
 
     messages = [
         SystemMessage(content=RESEARCHER_SYSTEM.format(company=company)),
-        HumanMessage(
-            content=(
-                f"Research {company} using the following information and compile "
-                f"a structured list of facts:\n\n{search_results}"
-            )
-        ),
+        HumanMessage(content=task),
     ]
     response = llm.invoke(messages)
-    return {"research": response.content}
+    return {"task": task, "history": [AIMessage(content=response.content)]}
 
 
 def analyst(state: PipelineState, llm) -> dict:
     """Analyst node: analyzes research data.
 
+    Receives the same team task as user message plus previous agent
+    outputs as assistant messages — identical to MS Agent's pattern.
+
     Args:
-        state: Current pipeline state with research data.
+        state: Current pipeline state with conversation history.
         llm: LangChain chat model.
 
     Returns:
-        Dict with 'analysis' key containing analytical insights.
+        Dict with 'history' key appending the analyst's response.
     """
     company = state["company"]
     messages = [
         SystemMessage(content=ANALYST_SYSTEM.format(company=company)),
-        HumanMessage(
-            content=(
-                f"Analyze the following research data about {company} and provide "
-                f"key insights:\n\n{state['research']}"
-            )
-        ),
+        HumanMessage(content=state["task"]),
+        *state["history"],
     ]
     response = llm.invoke(messages)
-    return {"analysis": response.content}
+    return {"history": [AIMessage(content=response.content)]}
 
 
 def writer(state: PipelineState, llm) -> dict:
     """Writer node: creates the final report.
 
+    Receives the same team task as user message plus full conversation
+    history — identical to MS Agent's pattern.
+
     Args:
-        state: Current pipeline state with research and analysis.
+        state: Current pipeline state with full conversation history.
         llm: LangChain chat model.
 
     Returns:
@@ -71,14 +78,8 @@ def writer(state: PipelineState, llm) -> dict:
     company = state["company"]
     messages = [
         SystemMessage(content=WRITER_SYSTEM.format(company=company)),
-        HumanMessage(
-            content=(
-                f"Write a research report about {company} using the following "
-                f"research and analysis:\n\n"
-                f"## Research\n{state['research']}\n\n"
-                f"## Analysis\n{state['analysis']}"
-            )
-        ),
+        HumanMessage(content=state["task"]),
+        *state["history"],
     ]
     response = llm.invoke(messages)
     return {"report": response.content}

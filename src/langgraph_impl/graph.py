@@ -52,6 +52,20 @@ def _create_llm(settings: BenchmarkSettings):
             api_key=settings.anthropic_api_key,
             temperature=0,
         )
+    elif settings.llm_provider == "azure_openai":
+        from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+        from langchain_openai import AzureChatOpenAI
+
+        token_provider = get_bearer_token_provider(
+            DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+        )
+        return AzureChatOpenAI(
+            azure_deployment=settings.azure_openai_deployment,
+            azure_endpoint=settings.azure_openai_endpoint,
+            azure_ad_token_provider=token_provider,
+            api_version=settings.azure_openai_api_version,
+            temperature=0,
+        )
     else:
         msg = f"Unsupported LLM provider: {settings.llm_provider}"
         raise ValueError(msg)
@@ -92,7 +106,7 @@ def run(company: str, settings: BenchmarkSettings) -> tuple[str, dict]:
     callback = UsageMetadataCallbackHandler()
     graph = build_graph(settings)
     result = graph.invoke(
-        {"company": company, "research": "", "analysis": "", "report": ""},
+        {"company": company, "task": "", "history": [], "report": ""},
         config={"callbacks": [callback]},
     )
 

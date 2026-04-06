@@ -47,6 +47,15 @@ def _create_judge_provider(settings: BenchmarkSettings):
             api_key=settings.openai_api_key,
             model=settings.judge_model,
         )
+    elif settings.judge_provider == "azure_openai":
+        from benchmark.providers import AzureOpenAIProvider
+
+        return AzureOpenAIProvider(
+            api_key=settings.azure_openai_api_key,
+            endpoint=settings.azure_openai_endpoint,
+            deployment=settings.azure_openai_deployment,
+            api_version=settings.azure_openai_api_version,
+        )
     elif settings.judge_provider == "anthropic":
         from llm_core.providers.anthropic import AnthropicProvider
 
@@ -120,6 +129,8 @@ def run_benchmark(settings: BenchmarkSettings | None = None) -> list[EvalResult]
                     model = settings.openai_model
                 elif settings.llm_provider == "anthropic":
                     model = settings.anthropic_model
+                elif settings.llm_provider == "azure_openai":
+                    model = settings.azure_openai_deployment
                 else:
                     model = settings.llm_model
 

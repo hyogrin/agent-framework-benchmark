@@ -37,6 +37,28 @@ class BenchmarkSettings(BaseSettings):
     openai_model: str = "gpt-4o"
     anthropic_model: str = "claude-sonnet-4-5-20250929"
 
+    # Azure OpenAI (optional)
+    azure_openai_endpoint: str = Field(
+        default="",
+        validation_alias=AliasChoices("AZURE_OPENAI_ENDPOINT", "BENCH_AZURE_OPENAI_ENDPOINT"),
+    )
+    azure_openai_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("AZURE_OPENAI_API_KEY", "BENCH_AZURE_OPENAI_API_KEY"),
+    )
+    azure_openai_api_version: str = Field(
+        default="2025-03-01-preview",
+        validation_alias=AliasChoices("AZURE_OPENAI_API_VERSION", "BENCH_AZURE_OPENAI_API_VERSION"),
+    )
+    azure_openai_deployment: str = Field(
+        default="",
+        validation_alias=AliasChoices(
+            "AZURE_AI_MODEL_DEPLOYMENT_NAME",
+            "AZURE_OPENAI_CHAT_DEPLOYMENT_NAME",
+            "BENCH_AZURE_OPENAI_DEPLOYMENT",
+        ),
+    )
+
     # Judge configuration (which LLM evaluates the reports)
     judge_provider: str = "ollama"
     judge_model: str = "qwen3:14b"

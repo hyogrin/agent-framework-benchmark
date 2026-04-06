@@ -13,11 +13,11 @@ dependencies = [
     "pandas>=2.0.0",
     "plotly>=5.0.0",
     "tenacity>=8.0.0",
-
     # LLM Providers (for llm_core + judge)
     "anthropic>=0.18.0",
     "openai>=1.0.0",
     "ollama>=0.4.0",
+    "azure-identity>=1.26.0b1",
 ]
 
 [project.optional-dependencies]

@@ -51,6 +51,24 @@ def _create_chat_client(settings: BenchmarkSettings):
             "Use 'ollama' or 'openai' provider instead."
         )
         raise ValueError(msg)
+    elif settings.llm_provider == "azure_openai":
+        from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+        from openai import AsyncAzureOpenAI
+        from agent_framework.openai import OpenAIChatClient
+
+        token_provider = get_bearer_token_provider(
+            DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+        )
+        azure_client = AsyncAzureOpenAI(
+            azure_endpoint=settings.azure_openai_endpoint,
+            azure_ad_token_provider=token_provider,
+            api_version=settings.azure_openai_api_version,
+        )
+        return OpenAIChatClient(
+            model_id=settings.azure_openai_deployment,
+            api_key="unused",
+            async_client=azure_client,
+        )
     else:
         msg = f"Unsupported LLM provider: {settings.llm_provider}"
         raise ValueError(msg)
